@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eagle Gang - Admin Panel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000000;
+            color: #00ff41;
+            text-align: center;
+            margin: 0;
+            padding: 20px 10px;
+            overflow-x: hidden;
+        }
+
+        /* BACKGROUND MATRIX CANVAS */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            display: none;
+        }
+
+        /* LOGIN CARD */
+        .login-card {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(5, 5, 5, 0.95);
+            padding: 30px 20px;
+            border-radius: 8px;
+            max-width: 360px;
+            margin: 60px auto;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+        }
+
+        /* ADMIN DASHBOARD CARD */
+        .dashboard-card {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(5, 5, 5, 0.92);
+            padding: 20px 15px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 10px auto;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.5);
+            text-align: left;
+            display: none;
+        }
+
+        h2 { 
+            color: #00ff41; 
+            text-shadow: 0 0 8px #00ff41;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-top: 0;
+        } 
+
+        /* BADA ADMIN HEADER */
+        .admin-header {
+            text-align: center;
+            border-bottom: 2px dashed #00ff41;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .admin-title {
+            font-size: 11px;
+            color: #888;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .admin-name {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+            letter-spacing: 3px;
+        }
+        .admin-nickname {
+            font-size: 14px;
+            color: #00ff41;
+            margin-top: 4px;
+            letter-spacing: 2px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #00ff41;
+            background-color: #000000;
+            color: #00ff41;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        input::placeholder {
+            color: #008020;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00ff41;
+            border: none;
+            color: #000000;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.6);
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background-color: #00cc33;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 1);
+        }
+
+        /* SECTION HEADINGS */
+        .section-title {
+            font-size: 14px;
+            color: #ffffff;
+            background-color: #003300;
+            padding: 6px 10px;
+            border-left: 4px solid #00ff41;
+            margin: 20px 0 10px 0;
+            letter-spacing: 1px;
+        }
+
+        /* MEMBER TABLE / LIST */
+        .member-list {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        .member-list th {
+            border-bottom: 1px solid #00ff41;
+            padding: 8px;
+            color: #00ff41;
+            text-align: left;
+        }
+        .member-list td {
+            padding: 8px;
+            border-bottom: 1px solid #113311;
+            color: #dddddd;
+        }
+
+        /* NEON GREEN ACTIVE BADGE */
+        .badge-active {
+            background-color: #00ff41;
+            color: #000000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 0 8px rgba(0, 255, 65, 0.8);
+        }
+
+        /* TERMINAL SCANNING LOG */
+        .terminal-box {
+            background-color: #000000;
+            border: 1px dashed #008020;
+            padding: 10px;
+            font-size: 11px;
+            color: #00ff41;
+            height: 90px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MATRIX ANIMATION CANVAS -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- LOGIN FORM SECTION -->
+    <div id="loginBox" class="login-card">
+        <h2>EAGLE GANG LOGIN</h2>
+        <input type="text" id="username" placeholder="Enter username">
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="checkLogin()">LOGIN SYSTEM</button>
+        <p id="errorMsg" style="color: #ff3333; font-size: 12px; margin-top: 10px;"></p>
+    </div>
+
+    <!-- MAIN ADMIN DASHBOARD -->
+    <div id="secretContent" class="dashboard-card">
+        
+        <!-- BADA ADMIN HEADER -->
+        <div class="admin-header">
+            <div class="admin-title">[ CHIEF LEADER & ADMIN ]</div>
+            <div class="admin-name">Welcome to Eagle Gang</div>
+            <div class="admin-nickname" id="userDisplay">ALIAS: [ Flipper01 ]</div>
+        </div>
+
+        <!-- TERMINAL SCANNING MONITOR -->
+        <div class="section-title">> SYSTEM LIVE LOGS (CMD SCAN)</div>
+        <div class="terminal-box" id="terminalLogs">
+            > [SYSTEM] SESSION ACTIVE...<br>
+            > [SCAN] RUNNING BACKGROUND PROCESSES (dir/s)...<br>
+            > [SECURITY] FIREWALL ACTIVE & ENCRYPTED.<br>
+            > [NETWORK] CONNECTED TO PRIVATE EAGLE GANG SERVER.
+        </div>
+
+        <!-- MEMBER HISTORY & LIST TABLE -->
+        <div class="section-title">> GANG MEMBERS HISTORY</div>
+        <table class="member-list">
+            <thead>
+                <tr>
+                    <th>CODE/ID</th>
+                    <th>NAME</th>
+                    <th>NICKNAME</th>
+                    <th>ROLE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#EG-01</td>
+                    <td><strong>AHAD</strong></td>
+                    <td>Flipper01</td>
+                    <td>LEADER</td>
+                    <td><span class="badge-active">ACTIVE</span></td>
+                </tr>
+                <tr>
+                    <td>#EG-02</td>
+                    <td><strong>KABIR</strong></td>
+                    <td>Esp32</td>
+                    <td>Scammer</td>
+                    <td><span class="badge-active">ACTIVE</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button onclick="logout()">LOGOUT SYSTEM</button>
+    </div>
+
+    <script>
+        let matrixInterval;
+
+        // Multiple Users Database
+        const validUsers = {
+            "Flipper01": "#EG-01",
+            "Esp32": "#EG-02"
+        };
+
+        function checkLogin() {
+            let u = document.getElementById("username").value;
+            let p = document.getElementById("password").value;
+
+            // Checking username and matching password
+            if (validUsers[u] && validUsers[u] === p) {
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("secretContent").style.display = "block";
+                
+                // Display logged in user info dynamically
+                document.getElementById("userDisplay").innerText = "ALIAS: [ " + u + " ]";
+                
+                document.getElementById("matrixCanvas").style.display = "block";
+                startMatrixRain();
+            } else {
+                document.getElementById("errorMsg").innerText = "ACCESS DENIED: Incorrect Username/Password!";
+            }
+        }
+
+        function logout() {
+            document.getElementById("loginBox").style.display = "block";
+            document.getElementById("secretContent").style.display = "none";
+            document.getElementById("matrixCanvas").style.display = "none";
+            
+            clearInterval(matrixInterval);
+
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+            document.getElementById("errorMsg").innerText = "";
+        }
+
+        // MATRIX BACKGROUND LOGIC
+        function startMatrixRain() {
+            const canvas = document.getElementById("matrixCanvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+
+            const drops = [];
+            for (let x = 0; x < columns; x++) {
+                drops[x] = 1;
+            }
+
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#00ff41";
+                ctx.font = fontSize + "px monospace";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            matrixInterval = setInterval(draw, 33);
+        }
+    </script>
+
+</body>
+</html>
